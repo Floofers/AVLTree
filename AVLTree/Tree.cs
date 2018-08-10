@@ -46,15 +46,17 @@ namespace AVLTree
             if (AddLeft)
             {
                 prev.Left = current;
+                
                 Count++;
-                balanceTree(Root);
+                Root = balanceTree(Root);
                 return;
             }
             else
             {
                 prev.Right = current;
+                
                 Count++;
-                balanceTree(Root);
+                Root = balanceTree(Root);
                 return;
             }
         }
@@ -148,16 +150,21 @@ namespace AVLTree
         public Node<T> RightRight(Node<T> parent)
         {
             Node<T> temp = parent.Right;
+            temp.Parent = parent.Parent;
             parent.Right = temp.Left;
-            temp.Left = parent;
+            temp.Left = parent.Left;
+            parent.Parent = temp;
             return temp;
         }
 
         public Node<T> LeftLeft(Node<T> parent)
         {
             Node<T> temp = parent.Left;
+            temp.Parent = parent.Parent;
             parent.Left = temp.Right;
-            temp.Right = parent;
+            temp.Right = parent.Right;
+            parent.Parent = temp;
+
             return temp;
         }
 
@@ -165,14 +172,14 @@ namespace AVLTree
         {
             Node<T> temp = parent.Left;
             parent.Left = RightRight(temp);
-            return temp;//LeftLeft(parent);
+            return LeftLeft(parent);
         }
 
         public Node<T> RightLeft(Node<T> parent)
         {
             Node<T> temp = parent.Right;
             parent.Right = LeftLeft(temp);
-            return temp;//RightRight(parent);
+            return RightRight(parent);
         }
 
         public bool remove(T value)
