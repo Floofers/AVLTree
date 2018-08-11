@@ -16,7 +16,6 @@ namespace AVLTree
             tree.Add(17);
             tree.Add(49);
             tree.Add(12);
-            //tree.balanceTree(tree.Root);
             Console.ReadKey();
         }
     }

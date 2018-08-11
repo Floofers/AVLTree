@@ -147,26 +147,49 @@ namespace AVLTree
             return bFac;
         }
 
+        /* public Node<T> RightRight(Node<T> parent)
+         {
+             Node<T> temp = parent.Right;
+             temp.Parent = parent.Parent;
+             parent.Right = temp.Left;
+             temp.Left = parent.Left;
+             parent.Parent = temp;
+             return temp;
+         }*/
+
         public Node<T> RightRight(Node<T> parent)
         {
             Node<T> temp = parent.Right;
-            temp.Parent = parent.Parent;
             parent.Right = temp.Left;
-            temp.Left = parent.Left;
+            temp.Left = parent;
             parent.Parent = temp;
+            temp.Parent = parent.Parent;
             return temp;
         }
-
         public Node<T> LeftLeft(Node<T> parent)
         {
             Node<T> temp = parent.Left;
-            temp.Parent = parent.Parent;
             parent.Left = temp.Right;
-            temp.Right = parent.Right;
+            temp.Right = parent;
+            temp.Parent = parent.Parent;
             parent.Parent = temp;
 
             return temp;
         }
+
+        /*public Node<T> LeftLeft(Node<T> parent)
+        {
+            Node<T> temp = parent.Left;
+            Node<T> tempParent = parent.Parent;
+            Node<T> originalParent = parent;
+            parent = temp.Right;
+            temp.Right = parent;
+            temp.Parent = tempParent;
+            tempParent = temp.Parent;
+            temp = originalParent;
+            temp.Left = originalParent.Left.Left;
+            return temp;
+        }*/
 
         public Node<T> LeftRight(Node<T> parent)
         {
@@ -204,6 +227,7 @@ namespace AVLTree
             }
             return false;
         }
+
         public void Delete(Node<T> node)
         {
             if (node.childCount == 0)
