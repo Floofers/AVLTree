@@ -16,21 +16,7 @@ namespace AVLTree
         public T Value;
         public int Height;
 
-        public int Balance()
-        {
-            int leftH = 0;
-            int righH = 0;
-            if(Left != null)
-            {
-                leftH = Left.Height;
-            }
-            if (Right != null)
-            {
-                righH = Right.Height;
-            }
-            int balance = leftH - righH;
-            return balance;
-        }
+        
 
         public Node<T> FirstChild
         {

@@ -29,13 +29,11 @@ namespace AVLTree
                 prev = current;
                 if (value.CompareTo(current.Value) >= 0)
                 {
-                    current.Height++;
                     current = current.Right;
                     AddLeft = false;
                 }
                 else
                 {
-                    current.Height++;
                     current = current.Left;
                     AddLeft = true;
                 }
@@ -46,7 +44,7 @@ namespace AVLTree
             if (AddLeft)
             {
                 prev.Left = current;
-                
+                current.Height = getHeight(current);
                 Count++;
                 Root = balanceTree(Root);
                 return;
@@ -54,116 +52,47 @@ namespace AVLTree
             else
             {
                 prev.Right = current;
-                
+                current.Height = getHeight(current);
                 Count++;
                 Root = balanceTree(Root);
                 return;
             }
         }
-        /*
-        public void TreeBalance()
-        {
-            if (Root.Height >= 3)
-            {
-                Left(Root);
-                Root.Balance();
-            }
-            else if (Root.Height >= -3)
-            {
-                Right(Root);
-                Root.Balance();
-            }
-        }
-        public void Left(Node<T> node)
-        {
-            if(node.Parent == null)
-            {
-                return;
-            }
-            if (node.Height >= 2)
-            {
-                node.Left = node.Parent;
-                node.Left = node.Parent.Left;
-                node.Right = node.Parent.Right;
-                node.Parent.Left = node.Left;
-            }
-            
-        }
-        public void Right(Node<T> node)
-        {
-            if (node.Parent == null)
-            {
-                return;
-            }
-            if (node.Height <= -2)
-            {
-                node.Right = node.Parent;
-                node.Right = node.Parent.Right;
-                node.Left = node.Parent.Left;
-                node.Parent.Right = node.Right;
-            }
-        }*/
+
         public Node<T> balanceTree(Node<T> node)
         {
-            int height = balanceFac(node);
-            if(height > 1)
+            int height = getHeight(node);
+
+            int lH = getHeight(node.Left);
+            int rH = getHeight(node.Right);
+
+            int balance = lH - rH;
+
+            if (balance > 1)
             {
-                if(balanceFac(node.Left) >0)
-                {
-                    node = LeftLeft(node);
-                }
-                else
-                {
-                    node = LeftRight(node);
-                }
+                LeftLeft(node);
+
+                //rotate right
             }
-            else if(height < -1)
+            else if (balance < -1)
             {
-                if(balanceFac(node) > 0)
-                {
-                    node = RightLeft(node);
-                }
-                else
-                {
-                    node = RightRight(node);
-                }
+                RightRight(node);
+                //rotate left
             }
+
             return node;
         }
 
-        public int balanceFac(Node<T> node)
-        {
-            int left = 0;
-            if(node.Left != null)
-            {
-                left = node.Left.Height;
-            }
-            int right = 0;
-            if(node.Right != null)
-            {
-                right = node.Right.Height;
-            }
-            int bFac = left - right;
-            return bFac;
-        }
 
-        /* public Node<T> RightRight(Node<T> parent)
-         {
-             Node<T> temp = parent.Right;
-             temp.Parent = parent.Parent;
-             parent.Right = temp.Left;
-             temp.Left = parent.Left;
-             parent.Parent = temp;
-             return temp;
-         }*/
+        
 
         public Node<T> RightRight(Node<T> parent)
         {
             Node<T> temp = parent.Right;
             parent.Right = temp.Left;
             temp.Left = parent;
-            parent.Parent = temp;
             temp.Parent = parent.Parent;
+            parent.Parent = temp;
             return temp;
         }
         public Node<T> LeftLeft(Node<T> parent)
@@ -176,28 +105,12 @@ namespace AVLTree
 
             return temp;
         }
-
-        /*public Node<T> LeftLeft(Node<T> parent)
-        {
-            Node<T> temp = parent.Left;
-            Node<T> tempParent = parent.Parent;
-            Node<T> originalParent = parent;
-            parent = temp.Right;
-            temp.Right = parent;
-            temp.Parent = tempParent;
-            tempParent = temp.Parent;
-            temp = originalParent;
-            temp.Left = originalParent.Left.Left;
-            return temp;
-        }*/
-
         public Node<T> LeftRight(Node<T> parent)
         {
             Node<T> temp = parent.Left;
             parent.Left = RightRight(temp);
             return LeftLeft(parent);
         }
-
         public Node<T> RightLeft(Node<T> parent)
         {
             Node<T> temp = parent.Right;
@@ -205,7 +118,7 @@ namespace AVLTree
             return RightRight(parent);
         }
 
-        public bool remove(T value)
+        public bool Remove(T value)
         {
             var current = Root;
             while(current != null)
@@ -228,22 +141,19 @@ namespace AVLTree
             return false;
         }
 
-        public void Delete(Node<T> node)
+        private void Delete(Node<T> node)
         {
             if (node.childCount == 0)
             {
-                if (node.IsLeftChild)
+                if (node.Parent.Left != null)
                 {
                     node.Parent.Left = null;
                 }
-                else if (node.IsRightChild)
+                else if (node.Parent.Right != null)
                 {
                     node.Parent.Right = null;
                 }
-                else
-                {
-                    Root = null;
-                }
+                node = null;
             }
             else if (node.childCount == 1)
             {
@@ -270,7 +180,7 @@ namespace AVLTree
                 node.Value = temp.Value;
                 Delete(temp);
             }
-
+            
         }
         private Node<T> min(Node<T> node)
         {
@@ -279,6 +189,41 @@ namespace AVLTree
                 node = node.Left;
             }
             return node;
+        }
+        private int getHeight(Node<T> node)
+        {
+            if (node == null)
+            {
+                return 0;
+            }
+            else if (node.Left == null && node.Right == null)
+            {
+                return 1;
+            }
+            else
+            {
+                if (node.Left == null)
+                {
+                    return getHeight(node.Right) + 1;
+                }
+                else if (node.Right == null)
+                {
+                    return getHeight(node.Left) + 1;
+                }
+                else
+                {
+                    int lH = getHeight(node.Left);
+                    int rH = getHeight(node.Right);
+                    if (rH >= lH)
+                    {
+                        return rH + 1;
+                    }
+                    else
+                    {
+                        return lH + 1;
+                    }
+                }
+            }
         }
         private Node<T> max(Node<T> Node)
         {

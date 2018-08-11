@@ -15,7 +15,9 @@ namespace AVLTree
             tree.Add(37);
             tree.Add(17);
             tree.Add(49);
-            tree.Add(12);
+            /*tree.Add(12);
+            tree.Remove(12);
+            tree.Remove(49);*/
             Console.ReadKey();
         }
     }
